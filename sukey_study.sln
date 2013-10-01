@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sukey_study", "sukey_study\sukey_study.vcproj", "{298C64C6-A99B-4A71-AF1F-13BC9E4824EF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sukey_cplusplus", "sukey_CPlusPlus\sukey_CPlusPlus.vcproj", "{7599CDDD-50D0-4360-91E8-12DD3A156652}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sukey_mfc", "sukey_mfc\sukey_mfc.vcproj", "{4D343DAF-4471-4652-A232-F6C854276762}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{298C64C6-A99B-4A71-AF1F-13BC9E4824EF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{298C64C6-A99B-4A71-AF1F-13BC9E4824EF}.Debug|Win32.Build.0 = Debug|Win32
+		{298C64C6-A99B-4A71-AF1F-13BC9E4824EF}.Release|Win32.ActiveCfg = Release|Win32
+		{298C64C6-A99B-4A71-AF1F-13BC9E4824EF}.Release|Win32.Build.0 = Release|Win32
+		{7599CDDD-50D0-4360-91E8-12DD3A156652}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7599CDDD-50D0-4360-91E8-12DD3A156652}.Debug|Win32.Build.0 = Debug|Win32
+		{7599CDDD-50D0-4360-91E8-12DD3A156652}.Release|Win32.ActiveCfg = Release|Win32
+		{7599CDDD-50D0-4360-91E8-12DD3A156652}.Release|Win32.Build.0 = Release|Win32
+		{4D343DAF-4471-4652-A232-F6C854276762}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4D343DAF-4471-4652-A232-F6C854276762}.Debug|Win32.Build.0 = Debug|Win32
+		{4D343DAF-4471-4652-A232-F6C854276762}.Release|Win32.ActiveCfg = Release|Win32
+		{4D343DAF-4471-4652-A232-F6C854276762}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
