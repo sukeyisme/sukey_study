@@ -7,6 +7,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sukey_cplusplus", "sukey_CP
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sukey_mfc", "sukey_mfc\sukey_mfc.vcproj", "{4D343DAF-4471-4652-A232-F6C854276762}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "derived_mfc", "derived_mfc\derived_mfc.vcproj", "{2556C23E-E877-4920-A06A-68C1710BB328}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mfc_main", "mfc_main\mfc_main.vcproj", "{FFBD04B6-990F-4542-92C3-C7749CE81AC9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2556C23E-E877-4920-A06A-68C1710BB328} = {2556C23E-E877-4920-A06A-68C1710BB328}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +32,14 @@ Global
 		{4D343DAF-4471-4652-A232-F6C854276762}.Debug|Win32.Build.0 = Debug|Win32
 		{4D343DAF-4471-4652-A232-F6C854276762}.Release|Win32.ActiveCfg = Release|Win32
 		{4D343DAF-4471-4652-A232-F6C854276762}.Release|Win32.Build.0 = Release|Win32
+		{2556C23E-E877-4920-A06A-68C1710BB328}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2556C23E-E877-4920-A06A-68C1710BB328}.Debug|Win32.Build.0 = Debug|Win32
+		{2556C23E-E877-4920-A06A-68C1710BB328}.Release|Win32.ActiveCfg = Release|Win32
+		{2556C23E-E877-4920-A06A-68C1710BB328}.Release|Win32.Build.0 = Release|Win32
+		{FFBD04B6-990F-4542-92C3-C7749CE81AC9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FFBD04B6-990F-4542-92C3-C7749CE81AC9}.Debug|Win32.Build.0 = Debug|Win32
+		{FFBD04B6-990F-4542-92C3-C7749CE81AC9}.Release|Win32.ActiveCfg = Release|Win32
+		{FFBD04B6-990F-4542-92C3-C7749CE81AC9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
