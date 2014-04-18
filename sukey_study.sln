@@ -12,6 +12,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mfc_main", "mfc_main\mfc_ma
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sukey_log", "sukey_log\sukey_log.vcproj", "{16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main", "main\main.vcproj", "{99626E48-2A66-4EDA-B208-00483E121E88}"
+	ProjectSection(ProjectDependencies) = postProject
+		{16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296} = {16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -34,6 +39,10 @@ Global
 		{16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296}.Debug|Win32.Build.0 = Debug|Win32
 		{16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296}.Release|Win32.ActiveCfg = Release|Win32
 		{16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296}.Release|Win32.Build.0 = Release|Win32
+		{99626E48-2A66-4EDA-B208-00483E121E88}.Debug|Win32.ActiveCfg = Debug|Win32
+		{99626E48-2A66-4EDA-B208-00483E121E88}.Debug|Win32.Build.0 = Debug|Win32
+		{99626E48-2A66-4EDA-B208-00483E121E88}.Release|Win32.ActiveCfg = Release|Win32
+		{99626E48-2A66-4EDA-B208-00483E121E88}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
