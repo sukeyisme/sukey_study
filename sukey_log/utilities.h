@@ -34,7 +34,22 @@ _START_SUKEY_NAMESPACE_
 namespace log_internal_
 {
 	pid_t GetTID();
+
+	struct CrashReason {
+  CrashReason() : filename(0), line_number(0), message(0), depth(0) {}
+
+  const char* filename;
+  int line_number;
+  const char* message;
+
+  // We'll also store a bit of stack trace context at the time of crash as
+  // it may not be available later on.
+  void* stack[32];
+  int depth;
+};
+
 }
+
 _END_SUKEY_NAMESPACE_
 
 using namespace SUKEY_NAMESPACE::log_internal_;

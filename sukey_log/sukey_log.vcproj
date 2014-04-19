@@ -175,6 +175,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\port.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\utilities.cpp"
 				>
 			</File>

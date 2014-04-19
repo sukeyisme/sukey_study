@@ -26,11 +26,11 @@ struct LogMessage::LogMessageData
 		std::vector<std::string>* outvec_;
 		std::string* message_;
 	};
-	/*time_t timestamp_;
+	time_t timestamp_;
 	struct ::tm tm_time_;
 	size_t num_prefix_chars_;
 	size_t num_chars_to_log_;
-	size_t num_chars_to_syslog_;*/
+	size_t num_chars_to_syslog_;
 	const char* basename_;
 	const char* fullname_;
 	bool has_been_flushed_;
@@ -44,6 +44,23 @@ private:
 
 //全局变量
 const size_t LogMessage::kMaxLogMessageLen = 1000;
+const char* const LogSeverityNames[NUM_SEVERITIES] =
+{
+	"INFO","WARNING","ERROR","FATAL"
+};
+
+static bool exit_on_dfatal = true;
+static Mutex fatal_msg_lock;
+static CrashReason crash_reason;
+static bool fatal_msg_exclusive = true;
+static char fatal_msg_buf_exclusive[LogMessage::kMaxLogMessageLen+1];
+static char fatal_msg_buf_shared[LogMessage::kMaxLogMessageLen+1];
+static LogMessage::LogStream fatal_msg_stream_exclusive(
+    fatal_msg_buf_exclusive, LogMessage::kMaxLogMessageLen, 0);
+static LogMessage::LogStream fatal_msg_stream_shared(
+    fatal_msg_buf_shared, LogMessage::kMaxLogMessageLen, 0);
+static LogMessage::LogMessageData fatal_msg_data_exclusive;
+static LogMessage::LogMessageData fatal_msg_data_shared;
 
 
 LogMessage::LogMessageData::~LogMessageData()
@@ -172,11 +189,6 @@ LogSink::~LogSink()
 void LogSink::WaitTillSent() {
  
 }
-
-const char* const LogSeverityNames[NUM_SEVERITIES] =
-{
-	"INFO","WARNING","ERROR","FATAL"
-};
 
 std::string LogSink::ToString(LogSeverity severity, const char* file, int line,
                          const struct ::tm* tm_time,
