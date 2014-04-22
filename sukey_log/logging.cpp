@@ -1,11 +1,20 @@
 #include "utilities.h"
 #include <iomanip>
 #include <string>
+#include "commandlineflags.h"
 #include "logging.h"
+#include "raw_logging.h"
 
 using std::setw;
 using std::setfill;
 using std::string;
+
+#define EXCLUSIVE_LOCKS_REQUIRED(mu)
+
+LOG_DEFINE_bool(log_prefix,true,"准备每行Log开始的前缀 ");
+LOG_DEFINE_int32(minloglevel, 0, "输出最低等级的Log");
+LOG_DEFINE_string(log_backtrace_at,"","当logging到file:linenum.发出回溯");
+
 _START_SUKEY_NAMESPACE_
 
 struct LogMessage::LogMessageData
@@ -42,7 +51,25 @@ private:
   void operator=(const LogMessageData&);
 };
 
+class LogDestination
+{
+public:
+	static void WaitForSinks(LogMessage::LogMessageData* data);
+private:
+
+	static Mutex sink_mutex_;
+};
+
+Mutex LogDestination::sink_mutex_;
+
+inline void LogDestination::WaitForSinks(sukey::LogMessage::LogMessageData *data)
+{
+	ReaderMutexLock l(&sink_mutex_);
+}
+
 //全局变量
+static Mutex log_mutex;
+int64 LogMessage::num_messages_[NUM_SEVERITIES] = {0, 0, 0, 0};//每个等级的Log数 在log_mutex下
 const size_t LogMessage::kMaxLogMessageLen = 1000;
 const char* const LogSeverityNames[NUM_SEVERITIES] =
 {
@@ -87,7 +114,39 @@ LogMessage::~LogMessage()
 
 void LogMessage::Flush()
 {
+	if(data_->has_been_flushed_ || data_->severity_<FLAGS_minloglevel)
+		return;
+
+	data_->num_chars_to_log_ = data_->stream_->pcount();
+	data_->num_chars_to_syslog_ = data_->num_chars_to_log_ - data_->num_prefix_chars_;
 	
+	//在末尾加换行符
+	bool append_newline = (data_->message_text_[data_->num_chars_to_log_-1] != '\n');
+	char original_final_char = '\0';
+
+	if (append_newline) {
+    original_final_char = data_->message_text_[data_->num_chars_to_log_];
+    data_->message_text_[data_->num_chars_to_log_++] = '\n';
+  }
+
+	{
+    MutexLock l(&log_mutex);
+    (this->*(data_->send_method_))();
+    ++num_messages_[static_cast<int>(data_->severity_)];
+  }
+	// LogDestination::WaitForSinks(data_); TODO:添加实现
+
+	if(append_newline)
+	{
+		 data_->message_text_[data_->num_chars_to_log_-1] = original_final_char;
+	}
+
+	 if (data_->preserved_errno_ != 0) 
+	{
+    errno = data_->preserved_errno_;
+  }
+
+	 data_->has_been_flushed_ = true;
 }
 
 void LogMessage::Init(const char* file, int line, LogSeverity severity,void (LogMessage::*send_method)())
@@ -97,6 +156,7 @@ void LogMessage::Init(const char* file, int line, LogSeverity severity,void (Log
     allocated_ = new LogMessageData();
     data_ = allocated_;
     data_->buf_ = new char[kMaxLogMessageLen+1];
+		memset(data_->buf_,0,kMaxLogMessageLen+1); //TODO:不知道是否合适
     data_->message_text_ = data_->buf_;
     data_->stream_alloc_ =
         new LogStream(data_->message_text_, kMaxLogMessageLen, 0);
@@ -172,9 +232,11 @@ void LogMessage::Init(const char* file, int line, LogSeverity severity,void (Log
   }
 }
 
-void LogMessage::SendToLog()
+void LogMessage::SendToLog() EXCLUSIVE_LOCKS_REQUIRED(log_mutex)
 {
-
+	OutputDebugStringA(data_->message_text_);//打印log到VS的输出
+	printf(data_->message_text_);//打印到命令行窗口
+	//TODO:打印到各种地方
 }
 
 std::ostream& LogMessage::stream()

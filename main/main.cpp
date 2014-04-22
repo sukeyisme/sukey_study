@@ -1,33 +1,23 @@
-//#include "logging.h"
-class B 
-{
-	int b;
-};
-class C
-{
-	int c;
-};
-class A
-{
-public:
-	explicit A(B* b){;}
-	~A(){;}
-};
+#include "utilities.h"
 
-template <bool>
-struct CompileAssert
-{
-};
+#include <iomanip>
+#include <iostream>
+#include <memory>
+#include <queue>
+#include <sstream>
+#include <string>
+#include <vector>
 
-#define COMPILE_ASSERT(expr,msg)\
-	typedef CompileAssert<bool(expr)> msg[bool(expr)? 1:-1]
+#include <stdio.h>
+#include <stdlib.h>
 
-//#define A(x) COMPILE_ASSERT(0,avilable_missing)
+#include "commandlineflags.h"
+#include "logging.h"
+#include "raw_logging.h"
 
 int main(int argc,char *argv[])
 {
-	A a(C());
-	//long num_cookies(999);
-	//LOG(INFO); /*<< "Found " << num_cookies << " cookies";*/
+	long num_cookies(999);
+	LOG(INFO) << "Found " << num_cookies << " cookies";
 	return 0;
 }

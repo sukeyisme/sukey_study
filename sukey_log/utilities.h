@@ -33,7 +33,12 @@ _START_SUKEY_NAMESPACE_
 
 namespace log_internal_
 {
+	typedef double WallTime;
+	WallTime WallTime_Now();
+
 	pid_t GetTID();
+
+	const char* const_basename(const char* filepath);
 
 	struct CrashReason {
   CrashReason() : filename(0), line_number(0), message(0), depth(0) {}

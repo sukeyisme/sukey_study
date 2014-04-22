@@ -15,6 +15,18 @@
 #endif
 #include <vector>
 
+namespace SUKEY_NAMESPACE
+{
+#if 0
+#elif 0
+#elif 1 //VC7 格式
+typedef __int32 int32;
+typedef unsigned __int32 uint32;
+typedef __int64 int64;
+typedef unsigned __int64 uint64;
+#else
+#endif
+}
 
 #ifndef SUKEY_STRIP_LOG
 #define SUKEY_STRIP_LOG	0
@@ -49,14 +61,31 @@
 #define COMPACT_SUKEY_LOG_FATAL sukey::NullStreamFatal()
 #endif
 
+#ifndef DECLARE_VARIABLE
+#define MUST_UNDEF_GFLAGS_DECLARE_MACROS
+#define DECLARE_VARIABLE(type, shorttype, name, tn)\
+	namespace fL##shorttype{\
+    extern SUKEY_LOG_DLL_DECL type FLAGS_##name;\
+  }\
+  using fL##shorttype::FLAGS_##name
+#define DECLARE_bool(name)\
+  DECLARE_VARIABLE(bool, B, name, bool)
+	
+#define DECLARE_int32(name) \
+  DECLARE_VARIABLE(sukey::int32, I, name, int32)
+
+#endif
+
+DECLARE_bool(log_prefix);
+
+DECLARE_int32(minloglevel);
 
 
 //普通LOG宏
-#define LOG(severity) COMPACT_SUKEY_LOG_##severity.stream();
+#define LOG(severity) COMPACT_SUKEY_LOG_##severity.stream()
 
 //sukey 空间内的各种类
 _START_SUKEY_NAMESPACE_
-
 namespace base_logging
 {
 	class LogStreamBuf:public std::streambuf
@@ -82,6 +111,11 @@ public:
 	LogMessage(const char* file, int line);
 	LogMessage(const char* file, int line, LogSeverity severity);
   ~LogMessage();
+
+	enum
+	{
+		kNoLogPrefix = -1
+	};
 
 	class SUKEY_LOG_DLL_DECL LogStream:public std::ostream
 	{
@@ -119,9 +153,14 @@ public:
 
 	struct LogMessageData;
 private:
+
+	static int64 num_messages_[NUM_SEVERITIES];
+
 	//Log 数据存放在分配出来的结构体中减少堆消耗
 	LogMessageData* allocated_;
 	LogMessageData* data_;
+
+	friend class LogDestination;
 
 };
 
@@ -141,8 +180,6 @@ public:
                               const struct ::tm* tm_time,
                               const char* message, size_t message_len);
 };
-
 _END_SUKEY_NAMESPACE_
-
 
 #endif

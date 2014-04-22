@@ -20,6 +20,35 @@
 _START_SUKEY_NAMESPACE_
 namespace log_internal_
 {
+#ifdef OS_WINDOWS
+static int gettimeofday(struct timeval *tv, void* tz) {
+#define EPOCHFILETIME (116444736000000000ULL)
+  FILETIME ft;
+  LARGE_INTEGER li;
+  uint64 tt;
+
+  GetSystemTimeAsFileTime(&ft);
+  li.LowPart = ft.dwLowDateTime;
+  li.HighPart = ft.dwHighDateTime;
+  tt = (li.QuadPart - EPOCHFILETIME) / 10;
+  tv->tv_sec = tt / 1000000;
+  tv->tv_usec = tt % 1000000;
+
+  return 0;
+}
+#endif
+
+int64 CycleClock_Now() {
+  // TODO(hamaji): temporary impementation - it might be too slow.
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return static_cast<int64>(tv.tv_sec) * 1000000 + tv.tv_usec;
+}
+
+WallTime WallTime_Now()
+{
+	return CycleClock_Now() * 0.000001;
+}
 
 pid_t GetTID() {
   // On Linux and MacOSX, we try to use gettid().
@@ -56,6 +85,15 @@ pid_t GetTID() {
   // If none of the techniques above worked, we use pthread_self().
   return (pid_t)(uintptr_t)pthread_self();
 #endif
+}
+
+const char* const_basename(const char* filepath) {
+  const char* base = strrchr(filepath, '/');
+#ifdef OS_WINDOWS  // Look for either path separator in Windows
+  if (!base)
+    base = strrchr(filepath, '\\');
+#endif
+  return base ? (base+1) : filepath;
 }
 
 }

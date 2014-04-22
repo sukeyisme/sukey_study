@@ -13,5 +13,10 @@
 #include <time.h>  
 typedef int pid_t;
 #define getpid  _getpid
+inline struct tm* localtime_r(const time_t* timep, struct tm* result)
+{
+  localtime_s(result, timep);
+  return result;
+}
 extern int snprintf(char *str, size_t size,const char *format, ...);
 #endif
