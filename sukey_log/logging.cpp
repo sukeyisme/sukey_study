@@ -14,6 +14,7 @@ using std::string;
 LOG_DEFINE_bool(log_prefix,true,"准备每行Log开始的前缀 ");
 LOG_DEFINE_int32(minloglevel, 0, "输出最低等级的Log");
 LOG_DEFINE_string(log_backtrace_at,"","当logging到file:linenum.发出回溯");
+LOG_DEFINE_bool(logtostderr,false,"除了输出到log文件输出到标准错误中去");
 
 _START_SUKEY_NAMESPACE_
 
@@ -55,6 +56,7 @@ class LogDestination
 {
 public:
 	static void WaitForSinks(LogMessage::LogMessageData* data);
+	static void LogToAllLogfiles(LogSeverity severity,time_t timestamp,const char* message, size_t len);
 private:
 
 	static Mutex sink_mutex_;
@@ -65,6 +67,19 @@ Mutex LogDestination::sink_mutex_;
 inline void LogDestination::WaitForSinks(sukey::LogMessage::LogMessageData *data)
 {
 	ReaderMutexLock l(&sink_mutex_);
+}
+
+inline void LogDestination::LogToAllLogfiles(LogSeverity severity,
+                                             time_t timestamp,
+                                             const char* message,
+                                             size_t len) {
+
+  if ( FLAGS_logtostderr ) {           // global flag: never log to file
+    ColoredWriteToStderr(severity, message, len);
+  } else {
+    for (int i = severity; i >= 0; --i)
+      LogDestination::MaybeLogToLogfile(i, timestamp, message, len);
+  }
 }
 
 //全局变量
@@ -234,9 +249,18 @@ void LogMessage::Init(const char* file, int line, LogSeverity severity,void (Log
 
 void LogMessage::SendToLog() EXCLUSIVE_LOCKS_REQUIRED(log_mutex)
 {
-	OutputDebugStringA(data_->message_text_);//打印log到VS的输出
-	printf(data_->message_text_);//打印到命令行窗口
-	//TODO:打印到各种地方
+	LogDestination::LogToAllLogfiles(data_->severity_, data_->timestamp_,
+                                     data_->message_text_,
+                                     data_->num_chars_to_log_);
+	LogDestination::MaybeLogToStderr(data_->severity_, data_->message_text_,
+                                     data_->num_chars_to_log_);
+	//需要用户自己实现
+	LogDestination::LogToSinks(data_->severity_,
+                               data_->fullname_, data_->basename_,
+                               data_->line_, &data_->tm_time_,
+                               data_->message_text_ + data_->num_prefix_chars_,
+                               (data_->num_chars_to_log_
+                                - data_->num_prefix_chars_ - 1));
 }
 
 std::ostream& LogMessage::stream()
