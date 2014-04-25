@@ -62,7 +62,7 @@ typedef unsigned __int64 uint64;
 #endif
 
 #ifndef DECLARE_VARIABLE
-#define MUST_UNDEF_GFLAGS_DECLARE_MACROS
+#define MUST_UNDEF_FLAGS_DECLARE_MACROS
 #define DECLARE_VARIABLE(type, shorttype, name, tn)\
 	namespace fL##shorttype{\
     extern SUKEY_LOG_DLL_DECL type FLAGS_##name;\
@@ -80,9 +80,23 @@ DECLARE_bool(log_prefix);
 
 DECLARE_int32(minloglevel);
 
+#ifdef MUST_UNDEF_FLAGS_DECLARE_MACROS
+#undef MUST_UNDEF_GFLAGS_DECLARE_MACROS
+#undef DECLARE_VARIABLE
+#undef DECLARE_bool
+#undef DECLARE_int32
+#endif
+
 
 //普通LOG宏
 #define LOG(severity) COMPACT_SUKEY_LOG_##severity.stream()
+
+#ifndef NDEBUG
+#define DLOG(severity)\
+	(true) ? (void)0 : sukey::LogMessageVoidify() & LOG(severity)
+#else
+
+#endif
 
 //sukey 空间内的各种类
 _START_SUKEY_NAMESPACE_
@@ -117,6 +131,11 @@ public:
 		kNoLogPrefix = -1
 	};
 
+//LogStream继承自std::ostream 是一个没有DLL接口的类 所以VC会报警告 然而 MSDN说可以忽略这个问题
+//http://msdn.microsoft.com/en-us/library/3tdb471s(VS.80).aspx
+//#ifdef _MSC_VER
+//#pragma warning(disable: 4275)
+//#endif
 	class SUKEY_LOG_DLL_DECL LogStream:public std::ostream
 	{
 	public:
@@ -162,6 +181,20 @@ private:
 
 	friend class LogDestination;
 
+};
+
+class SUKEY_LOG_DLL_DECL LogMessageVoidify
+{
+public:
+	LogMessageVoidify()
+	{
+
+	}
+	//&取地址符 比<<优先级 低 比?: 优先级高
+	void operator&(std::ostream&)
+	{
+	
+	}
 };
 
 //输出到别的地方 继承它的必须是线程安全的

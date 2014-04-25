@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #define DECLARE_VARIABLE(type,shorttype,name,tn)\
 	namespace fL##shorttype{\
 	extern SUKEY_LOG_DLL_DECL type FLAGS_##name;\

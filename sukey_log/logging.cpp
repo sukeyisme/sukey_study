@@ -75,10 +75,10 @@ inline void LogDestination::LogToAllLogfiles(LogSeverity severity,
                                              size_t len) {
 
   if ( FLAGS_logtostderr ) {           // global flag: never log to file
-    ColoredWriteToStderr(severity, message, len);
+    //ColoredWriteToStderr(severity, message, len);
   } else {
     for (int i = severity; i >= 0; --i)
-      LogDestination::MaybeLogToLogfile(i, timestamp, message, len);
+     ;// LogDestination::MaybeLogToLogfile(i, timestamp, message, len);
   }
 }
 
@@ -252,15 +252,15 @@ void LogMessage::SendToLog() EXCLUSIVE_LOCKS_REQUIRED(log_mutex)
 	LogDestination::LogToAllLogfiles(data_->severity_, data_->timestamp_,
                                      data_->message_text_,
                                      data_->num_chars_to_log_);
-	LogDestination::MaybeLogToStderr(data_->severity_, data_->message_text_,
-                                     data_->num_chars_to_log_);
+	//LogDestination::MaybeLogToStderr(data_->severity_, data_->message_text_,
+                   //                  data_->num_chars_to_log_);
 	//需要用户自己实现
-	LogDestination::LogToSinks(data_->severity_,
+	/*LogDestination::LogToSinks(data_->severity_,
                                data_->fullname_, data_->basename_,
                                data_->line_, &data_->tm_time_,
                                data_->message_text_ + data_->num_prefix_chars_,
                                (data_->num_chars_to_log_
-                                - data_->num_prefix_chars_ - 1));
+                                - data_->num_prefix_chars_ - 1));*/
 }
 
 std::ostream& LogMessage::stream()
