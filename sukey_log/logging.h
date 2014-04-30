@@ -1,8 +1,18 @@
+/*!
+*	\brief			log主要头文件
+* \details		各种LOG宏
+*	\author			Sukey
+* \version		0.1
+* \date				2013-2014
+* \pre				暂时没有
+*	\bug				暂时没有发现BUG
+* \warning		随便用
+* \copyright	sukey's code
+*/
 #ifndef _LOGGING_H_
 #define _LOGGING_H_
 
 #include "config.h"
-#include "log_severity.h"
 #include <errno.h>
 #include <string.h>
 #include <time.h>
@@ -32,6 +42,18 @@ typedef unsigned __int64 uint64;
 #define SUKEY_STRIP_LOG	0
 #endif
 
+#ifndef SUKEY_PREDICT_BRANCH_NOT_TAKEN
+#if 0
+#define SUKEY_PREDICT_BRANCH_NOT_TAKEN(x) (__builtin_expect(x, 0))
+#define SUKEY_PREDICT_FALSE(x) (__builtin_expect(x, 0))
+#define SUKEY_PREDICT_TRUE(x) (__builtin_expect(!!(x), 1))
+#else
+#define SUKEY_PREDICT_BRANCH_NOT_TAKEN(x) x
+#define SUKEY_PREDICT_FALSE(x) x
+#define SUKEY_PREDICT_TRUE(x) x
+#endif
+#endif
+
 //根据配置来定义需要的LOG宏
 #if SUKEY_STRIP_LOG ==0
 #define COMPACT_SUKEY_LOG_INFO sukey::LogMessage(\
@@ -42,14 +64,14 @@ typedef unsigned __int64 uint64;
 
 #if SUKEY_STRIP_LOG <=1
 #define COMPACT_SUKEY_LOG_WARNING sukey::LogMessage(\
-	__FILE__,__LINE__,sukey::GLOG_WARNING)
+	__FILE__,__LINE__,sukey::LOG_WARNING)
 #else
 #define COMPACT_SUKEY_LOG_WARNING google::NullStream()
 #endif
 
 #if SUKEY_STRIP_LOG <=2
 #define COMPACT_SUKEY_LOG_ERROR sukey::LogMessage( \
-      __FILE__, __LINE__, sukey::GLOG_ERROR)
+      __FILE__, __LINE__, sukey::LOG_ERROR)
 #else
 #define COMPACT_SUKEY_LOG_ERROR sukey::NullStream()
 #endif
@@ -74,11 +96,27 @@ typedef unsigned __int64 uint64;
 #define DECLARE_int32(name) \
   DECLARE_VARIABLE(sukey::int32, I, name, int32)
 
+#define DECLARE_string(name)\
+	namespace fLS\
+	{\
+		extern SUKEY_LOG_DLL_DECL std::string&  FLAGS_##name;\
+	}\
+	using fLS::FLAGS_##name
 #endif
 
 DECLARE_bool(log_prefix);
 
 DECLARE_int32(minloglevel);
+
+DECLARE_string(log_dir);
+
+DECLARE_int32(logbuflevel);
+
+DECLARE_int32(max_log_size);
+
+DECLARE_bool(stop_logging_if_full_disk);
+
+DECLARE_int32(logbufsecs);
 
 #ifdef MUST_UNDEF_FLAGS_DECLARE_MACROS
 #undef MUST_UNDEF_GFLAGS_DECLARE_MACROS
@@ -91,15 +129,33 @@ DECLARE_int32(minloglevel);
 //普通LOG宏
 #define LOG(severity) COMPACT_SUKEY_LOG_##severity.stream()
 
-#ifndef NDEBUG
-#define DLOG(severity)\
-	(true) ? (void)0 : sukey::LogMessageVoidify() & LOG(severity)
-#else
 
-#endif
 
 //sukey 空间内的各种类
 _START_SUKEY_NAMESPACE_
+#include "log_severity.h"
+
+_END_SUKEY_NAMESPACE_
+
+
+_START_SUKEY_NAMESPACE_
+#ifdef LOG_NO_ABBREVIATED_SEVERITIES
+#else
+#define LOG_ERROR_MSG ERROR_macro_is_defined_Define_LOG_NO_ABBREVIATED_SEVERITIES_before_including_logging_h_See_the_document_for_detail
+#define COMPACT_SUKEY_LOG_0 LOG_ERROR_MSG
+#define SYSLOG_0 LOG_ERROR_MSG
+#define LOG_TO_STRING_0 LOG_ERROR_MSG
+#define LOG_0 LOG_ERROR_MSG
+#endif
+
+#ifndef NDEBUG
+
+#else
+#define DLOG(severity)\
+	(true) ? (void)0 : sukey::LogMessageVoidify() & LOG(severity)
+#endif
+
+
 namespace base_logging
 {
 	class LogStreamBuf:public std::streambuf
@@ -170,6 +226,8 @@ public:
 
 	std::ostream& stream();
 
+	static void Fail() ;
+
 	struct LogMessageData;
 private:
 
@@ -181,6 +239,22 @@ private:
 
 	friend class LogDestination;
 
+};
+
+struct CheckOpString {
+  CheckOpString(std::string* str) : str_(str) { }
+  operator bool() const {
+    return SUKEY_PREDICT_BRANCH_NOT_TAKEN(str_ != NULL);
+  }
+  std::string* str_;
+};
+
+class SUKEY_LOG_DLL_DECL LogMessageFatal:public LogMessage
+{
+public:
+	LogMessageFatal(const char* file, int line);
+  LogMessageFatal(const char* file, int line, const CheckOpString& result);
+  ~LogMessageFatal() ;
 };
 
 class SUKEY_LOG_DLL_DECL LogMessageVoidify
@@ -213,6 +287,22 @@ public:
                               const struct ::tm* tm_time,
                               const char* message, size_t message_len);
 };
+
+SUKEY_LOG_DLL_DECL const std::vector<std::string>& GetLoggingDirectories();
+
+_START_BASE_NAMESPACE_
+
+class SUKEY_LOG_DLL_DECL Logger
+{
+public:
+	virtual ~Logger(){}
+	virtual void Write(bool force_flush,time_t timestamp,const char* message,int message_len)=0;
+	virtual void Flush()=0;
+	virtual uint32 LogSize() = 0;
+};
+
+_END_BASE_NAMESPACE_
+
 _END_SUKEY_NAMESPACE_
 
 #endif

@@ -6,6 +6,14 @@
 #if defined(NO_THREADS)
 
 #elif defined(_WIN32) || defined(__CYGWIN32__) || defined(__CYGWIN64__)
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+
+#ifndef NOGDI
+#define NOGDI
+#endif
+
 #include <windows.h>
 typedef CRITICAL_SECTION MutexType;
 

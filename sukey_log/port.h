@@ -20,6 +20,9 @@
 
 typedef int pid_t;
 #define getpid  _getpid
+
+typedef DWORD pthread_t;
+
 inline struct tm* localtime_r(const time_t* timep, struct tm* result)
 {
   localtime_s(result, timep);

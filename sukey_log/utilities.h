@@ -33,10 +33,21 @@ _START_SUKEY_NAMESPACE_
 
 namespace log_internal_
 {
+	const char* ProgramInvocationShortName();
+
+	int64 CycleClock_Now();
+
+	int64 UsecToCycles(int64 usec);
+
 	typedef double WallTime;
 	WallTime WallTime_Now();
 
+	int32 GetMainThreadPid();
+	bool PidHasChanged();
+
 	pid_t GetTID();
+
+	const std::string& MyUserName();
 
 	const char* const_basename(const char* filepath);
 

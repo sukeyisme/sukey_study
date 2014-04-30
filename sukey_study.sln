@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main", "main\main.vcproj", 
 		{16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296} = {16BF7557-CFB1-4CA8-AE25-AEA2BB9F7296}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asio", "asio\asio.vcproj", "{57141153-9F34-4A40-B634-23F1A8730C76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,10 @@ Global
 		{99626E48-2A66-4EDA-B208-00483E121E88}.Debug|Win32.Build.0 = Debug|Win32
 		{99626E48-2A66-4EDA-B208-00483E121E88}.Release|Win32.ActiveCfg = Release|Win32
 		{99626E48-2A66-4EDA-B208-00483E121E88}.Release|Win32.Build.0 = Release|Win32
+		{57141153-9F34-4A40-B634-23F1A8730C76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{57141153-9F34-4A40-B634-23F1A8730C76}.Debug|Win32.Build.0 = Debug|Win32
+		{57141153-9F34-4A40-B634-23F1A8730C76}.Release|Win32.ActiveCfg = Release|Win32
+		{57141153-9F34-4A40-B634-23F1A8730C76}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
