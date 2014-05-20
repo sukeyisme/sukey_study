@@ -9,10 +9,10 @@
 #include "config.h"
 #include "logging.h"
 #include "raw_logging.h"
-#include "commandlineflags.h"
+#include "flags.h"
 
-_START_SUKEY_NAMESPACE_
-
+namespace SUKEY_NAMESPACE
+{
 static struct ::tm last_tm_time_for_raw_log;
 static int last_usecs_for_raw_log;
 
@@ -21,4 +21,4 @@ void RawLog__SetLastTime(const struct ::tm& t, int usecs) {
   last_usecs_for_raw_log = usecs;
 }
 
-_END_SUKEY_NAMESPACE_
+}

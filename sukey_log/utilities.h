@@ -29,9 +29,10 @@
 #include "config.h"
 #include "logging.h"
 
-_START_SUKEY_NAMESPACE_
+namespace SUKEY_NAMESPACE
+{
 
-namespace log_internal_
+namespace LOG_INTERNAL_NAMESPACE
 {
 	const char* ProgramInvocationShortName();
 
@@ -66,7 +67,7 @@ namespace log_internal_
 
 }
 
-_END_SUKEY_NAMESPACE_
+}
 
-using namespace SUKEY_NAMESPACE::log_internal_;
+using namespace SUKEY_NAMESPACE::LOG_INTERNAL_NAMESPACE;
 #endif

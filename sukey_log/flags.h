@@ -1,11 +1,13 @@
-#ifndef BASE_COMMANDLINEFLAGS_H__
-#define BASE_COMMANDLINEFLAGS_H__
-
+#ifndef FLAGS_H_
+#define FLAGS_H_
 #include "config.h"
-#include "logging.h"
 #include <stdlib.h>
 #include <string.h>
+namespace FLAGS_NAMESPACE
+{
 
+	extern FLAGS_DLL_DECL const char* ProgramInvocationName(); 
+	extern FLAGS_DLL_DECL const char* ProgramInvocationShortName(); 
 
 #define DECLARE_VARIABLE(type,shorttype,name,tn)\
 	namespace fL##shorttype{\
@@ -15,8 +17,9 @@
 #define DEFINE_VARIABLE(type,shorttype,name,value,meaning,tn)\
 	namespace fL##shorttype\
 	{\
+	static const type FLAGS_nono##name = value;\
 	SUKEY_LOG_DLL_DECL type FLAGS_##name(value);\
-	char FLAGS_no##name;\
+	type FLAGS_no##name = FLAGS_nono##name;\
 	}\
 	using fL##shorttype::FLAGS_##name
 
@@ -63,4 +66,12 @@
 #define EnvToInt(envname,default_value)\
 	(!getenv(envname) ? (default_value) : strtol(getenv(envname), NULL, 10))
 
+
+	enum FLAGS_DLL_DECL FlagSettingMode
+	{
+		kSetFlagValue,
+		kSetFlagIfDefault,
+		kSetFlagsDefault
+	};
+}
 #endif

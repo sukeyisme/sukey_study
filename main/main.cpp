@@ -1,20 +1,21 @@
-//#include "utilities.h"
-//#include "commandlineflags.h"
-//#include "raw_logging.h"
-//#include "logging.h"
-//
-//using namespace SUKEY_NAMESPACE;
-//
-//int main(int argc,char *argv[])
-//{
-//	//ADD<<1;
-//	int a = 999;
-//	LOG(INFO)<<"zhe number is"<<a<<"end!";
-//	LOG(WARNING)<<"¾¯¸æ";
-//	LOG(ERROR)<<"´íÎó";
-//	LOG(FATAL)<<"ÑÏÖØ´íÎó£¡";
-//	return 0;
-//}
+#include "utilities.h"
+#include "flags.h"
+#include "raw_logging.h"
+#include "logging.h"
+
+using namespace SUKEY_NAMESPACE;
+
+int main(int argc,char *argv[])
+{
+	//ADD<<1;
+		//int a = 999;
+		//LOG(INFO)<<"zhe number is"<<a<<"end!";
+	LOG(WARNING)<<"¾¯¸æ";
+	//LOG(ERROR)<<"´íÎó";
+	//LOG(FATAL)<<"ÑÏÖØ´íÎó£¡";
+	//ParseCommandLineFlags(&argc,&argv,true);
+	return 0;
+}
 
 //
 // transmit_file.cpp
@@ -183,9 +184,9 @@
 //}
 
 
-#include "../include/asio.h"
-int main(int argc, char* argv[])
-{
-	return 0;
-}
+//#include "../include/asio.h"
+//int main(int argc, char* argv[])
+//{
+//	return 0;
+//}
 

@@ -118,6 +118,8 @@ DECLARE_bool(stop_logging_if_full_disk);
 
 DECLARE_int32(logbufsecs);
 
+DECLARE_bool(log_open);
+
 #ifdef MUST_UNDEF_FLAGS_DECLARE_MACROS
 #undef MUST_UNDEF_GFLAGS_DECLARE_MACROS
 #undef DECLARE_VARIABLE
@@ -127,18 +129,20 @@ DECLARE_int32(logbufsecs);
 
 
 //普通LOG宏
-#define LOG(severity) COMPACT_SUKEY_LOG_##severity.stream()
+#define LOG(severity) if(FLAGS_log_open) COMPACT_SUKEY_LOG_##severity.stream()
 
 
 
 //sukey 空间内的各种类
-_START_SUKEY_NAMESPACE_
+namespace SUKEY_NAMESPACE
+{
 #include "log_severity.h"
 
-_END_SUKEY_NAMESPACE_
+}
 
 
-_START_SUKEY_NAMESPACE_
+namespace SUKEY_NAMESPACE
+{
 #ifdef LOG_NO_ABBREVIATED_SEVERITIES
 #else
 #define LOG_ERROR_MSG ERROR_macro_is_defined_Define_LOG_NO_ABBREVIATED_SEVERITIES_before_including_logging_h_See_the_document_for_detail
@@ -156,7 +160,7 @@ _START_SUKEY_NAMESPACE_
 #endif
 
 
-namespace base_logging
+namespace BASE_LOGGING_NAMESPACE
 {
 	class LogStreamBuf:public std::streambuf
 	{
@@ -238,7 +242,6 @@ private:
 	LogMessageData* data_;
 
 	friend class LogDestination;
-
 };
 
 struct CheckOpString {
@@ -290,7 +293,8 @@ public:
 
 SUKEY_LOG_DLL_DECL const std::vector<std::string>& GetLoggingDirectories();
 
-_START_BASE_NAMESPACE_
+namespace BASE_NAMESPACE
+{
 
 class SUKEY_LOG_DLL_DECL Logger
 {
@@ -301,8 +305,8 @@ public:
 	virtual uint32 LogSize() = 0;
 };
 
-_END_BASE_NAMESPACE_
+}
 
-_END_SUKEY_NAMESPACE_
+}
 
 #endif

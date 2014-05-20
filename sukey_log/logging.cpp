@@ -1,8 +1,12 @@
+#ifndef SUKEY_LOG_SOURCE
+#define SUKEY_LOG_SOURCE
+#endif
+
 #include "utilities.h"
 #include <iomanip>
 #include <string>
 #include <fcntl.h>
-#include "commandlineflags.h"
+#include "flags.h"
 #include "logging.h"
 #include "raw_logging.h"
 
@@ -14,6 +18,18 @@ using std::vector;
 
 #define EXCLUSIVE_LOCKS_REQUIRED(mu)
 
+static const char* DefaultLogDir()
+{
+	const char* env;
+	env = getenv("SUKEY_LOG_DIR");
+	if(env!=NULL && env[0]!='\0')
+		return env;
+	env = getenv("TEST_TMPDIR");
+	if(env!=NULL && env[0]!='\0')
+		return env;
+	return "";
+}
+
 LOG_DEFINE_bool(log_prefix,true,"准备每行Log开始的前缀 ");
 LOG_DEFINE_int32(minloglevel, 0, "输出最低等级的Log");
 LOG_DEFINE_string(log_backtrace_at,"","当logging到file:linenum.发出回溯");
@@ -22,6 +38,9 @@ LOG_DEFINE_int32(logbuflevel,0,"缓存级别（只缓存不输出），在这个指定等级以下包括
 LOG_DEFINE_int32(max_log_size,1800,"log文件的最大尺寸(MB)。如果是0那么就成改写成1");
 LOG_DEFINE_bool(stop_logging_if_full_disk,false,"如果盘符是空的就停止LOG");
 LOG_DEFINE_int32(logbufsecs,30,"LOG日志最多这些时间");
+LOG_DEFINE_bool(log_open,false,"是否开启Log");
+LOG_DEFINE_string(log_dir,DefaultLogDir(),"如果有指定就用指定的，如果没有就用默认的");
+
 #define PATH_SEPARATOR '/' //为windows考虑
 
 static void GetHostName(string* hostname) {
@@ -46,20 +65,8 @@ static void GetHostName(string* hostname) {
 #endif
 }
 
-static const char* DefaultLogDir()
+namespace SUKEY_NAMESPACE
 {
-	const char* env;
-	env = getenv("SUKEY_LOG_DIR");
-	if(env!=NULL && env[0]!='\0')
-		return env;
-	env = getenv("TEST_TMPDIR");
-	if(env!=NULL && env[0]!='\0')
-		return env;
-	return "";
-}
-LOG_DEFINE_string(log_dir,DefaultLogDir(),"如果有指定就用指定的，如果没有就用默认的");
-
-_START_SUKEY_NAMESPACE_
 
 struct LogMessage::LogMessageData
 {
@@ -142,7 +149,7 @@ LogFileObject::LogFileObject(LogSeverity severity,
                              const char* base_filename)
   : base_filename_selected_(base_filename != NULL),
     base_filename_((base_filename != NULL) ? base_filename : ""),
-    symlink_basename_(log_internal_::ProgramInvocationShortName()),
+    symlink_basename_(log_internal::ProgramInvocationShortName()),
     filename_extension_(),
     file_(NULL),
     severity_(severity),
@@ -338,7 +345,7 @@ void LogFileObject::Write(bool force_flush,time_t timestamp,const char* message,
       // Where does the file get put?  Successively try the directories
       // "/tmp", and "."
       string stripped_filename(
-				log_internal_::ProgramInvocationShortName());
+				log_internal::ProgramInvocationShortName());
       string hostname;
       GetHostName(&hostname);
 
@@ -615,10 +622,6 @@ void LogMessage::Init(const char* file, int line, LogSeverity severity,void (Log
   data_->fullname_ = file;
   data_->has_been_flushed_ = false;
 
-  // If specified, prepend a prefix to each line.  For example:
-  //    I1018 160715 f5d4fbb0 logging.cc:1153]
-  //    (log level, GMT month, date, time, thread_id, file basename, line)
-  // We exclude the thread_id for the default thread.
   if (FLAGS_log_prefix && (line != kNoLogPrefix)) {
     stream() << LogSeverityNames[severity][0]
              << setw(2) << 1+data_->tm_time_.tm_mon
@@ -816,4 +819,4 @@ const vector<string>& GetLoggingDirectories() {
 }
 
 
-_END_SUKEY_NAMESPACE_
+}

@@ -41,13 +41,15 @@ static void GetHostName(string* hostname) {
 #endif
 }
 
-_START_SUKEY_NAMESPACE_
+namespace SUKEY_NAMESPACE
+{
 
 static const char* g_program_invocation_short_name = NULL;
 
 static pthread_t g_main_thread_id;
 
-_START_LOG_INTERNAL_NAMESPACE_
+namespace LOG_INTERNAL_NAMESPACE
+{
 
 const char* ProgramInvocationShortName() {
 if (g_program_invocation_short_name != NULL) {
@@ -156,5 +158,5 @@ const char* const_basename(const char* filepath) {
   return base ? (base+1) : filepath;
 }
 
-_END_LOG_INTERNAL_NAMESPACE_
-_END_SUKEY_NAMESPACE_
+}
+}

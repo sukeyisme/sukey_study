@@ -28,7 +28,7 @@ typedef CRITICAL_SECTION MutexType;
 #include <assert.h>
 #include <stdlib.h> 
 
-namespace log_internal_
+namespace LOG_INTERNAL_NAMESPACE
 {
 	class Mutex
 	{
@@ -122,6 +122,6 @@ class WriterMutexLock {
 
 }
 
-using namespace log_internal_;
+using namespace LOG_INTERNAL_NAMESPACE;
 
 #endif
