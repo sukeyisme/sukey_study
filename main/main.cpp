@@ -1,19 +1,28 @@
-#include "utilities.h"
-#include "flags.h"
-#include "raw_logging.h"
+//#include "utilities.h"
+//#include "flags.h"
+//#include "raw_logging.h"
+#include "wchar_logging.h"
 #include "logging.h"
+#include <wchar.h>
 
 using namespace SUKEY_NAMESPACE;
 
 int main(int argc,char *argv[])
 {
-	//ADD<<1;
-		//int a = 999;
-		//LOG(INFO)<<"zhe number is"<<a<<"end!";
-	LOG(WARNING)<<"¾¯¸æ";
-	//LOG(ERROR)<<"´íÎó";
-	//LOG(FATAL)<<"ÑÏÖØ´íÎó£¡";
-	//ParseCommandLineFlags(&argc,&argv,true);
+	setlocale(LC_ALL, "Chinese-simplified");
+
+	FLAGS_log_open = true;
+	FLAGS_log_dir = "D:\\temp";
+
+	wchar_t* b = L"²âÊÔ";
+	long c= 2;
+	LOG_PRINTF(INFO,L"×Ö·û´®:%s  Êý×Ö:%d",b,c);
+
+	LOG(INFO)<<b<<"Õª×Ô¸»";
+	/*char* b = "²âÊÔ";
+	long c= 2;
+	LOG_PRINTF(INFO,"×Ö·û´®:%s  Êý×Ö:%d",b,c);*/
+
 	return 0;
 }
 

@@ -241,6 +241,10 @@
 			RelativePath=".\logging.h"
 			>
 		</File>
+		<File
+			RelativePath=".\wchar_logging.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

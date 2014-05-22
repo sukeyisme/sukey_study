@@ -20,6 +20,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <stdarg.h>
 #if 0
 # include <unistd.h>
 #endif
@@ -127,11 +128,22 @@ DECLARE_bool(log_open);
 #undef DECLARE_int32
 #endif
 
+inline void LogPrintf(char* out,size_t size,const char* format,...)
+{
+	va_list args;
+	va_start(args,format);
+	vsnprintf(out,size,format,args);
+	va_end(args);
+}
 
 //普通LOG宏
 #define LOG(severity) if(FLAGS_log_open) COMPACT_SUKEY_LOG_##severity.stream()
-
-
+#define LOG_PRINTF(severity,format,...) \
+	do{\
+		char buf[600]={0};\
+		LogPrintf(buf,sizeof(buf)/sizeof(char)-1,format,##__VA_ARGS__);\
+		LOG(severity)<<buf;\
+	}while(0)\
 
 //sukey 空间内的各种类
 namespace SUKEY_NAMESPACE
@@ -139,7 +151,6 @@ namespace SUKEY_NAMESPACE
 #include "log_severity.h"
 
 }
-
 
 namespace SUKEY_NAMESPACE
 {
@@ -178,6 +189,18 @@ namespace BASE_LOGGING_NAMESPACE
 		char* pbase() const { return std::streambuf::pbase(); }
 	};
 }
+
+struct DummyClassToDefineOperator {};
+
+
+// Define global operator<< to declare using ::operator<<.
+// This declaration will allow use to use CHECK macros for user
+// defined classes which have operator<< (e.g., stl_logging.h).
+inline std::ostream& operator<<(
+    std::ostream& out, const sukey::DummyClassToDefineOperator&) {
+  return out;
+}
+
 
 class SUKEY_LOG_DLL_DECL LogMessage
 {
@@ -252,6 +275,7 @@ struct CheckOpString {
   std::string* str_;
 };
 
+
 class SUKEY_LOG_DLL_DECL LogMessageFatal:public LogMessage
 {
 public:
@@ -303,6 +327,24 @@ public:
 	virtual void Write(bool force_flush,time_t timestamp,const char* message,int message_len)=0;
 	virtual void Flush()=0;
 	virtual uint32 LogSize() = 0;
+};
+
+class SUKEY_LOG_DLL_DECL NullStream : public LogMessage::LogStream {
+ public:
+  // Initialize the LogStream so the messages can be written somewhere
+  // (they'll never be actually displayed). This will be needed if a
+  // NullStream& is implicitly converted to LogStream&, in which case
+  // the overloaded NullStream::operator<< will not be invoked.
+  NullStream() : LogMessage::LogStream(message_buffer_, 1, 0) { }
+  NullStream(const char* /*file*/, int /*line*/,
+             const CheckOpString& /*result*/) :
+      LogMessage::LogStream(message_buffer_, 1, 0) { }
+  NullStream &stream() { return *this; }
+ private:
+  // A very short buffer for messages (which we discard anyway). This
+  // will be needed if NullStream& converted to LogStream& (e.g. as a
+  // result of a conditional expression).
+  char message_buffer_[2];
 };
 
 }
