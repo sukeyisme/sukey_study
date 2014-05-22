@@ -171,11 +171,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\config.h"
+				>
+			</File>
+			<File
 				RelativePath=".\log_severity.h"
 				>
 			</File>
 			<File
 				RelativePath=".\logging.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\logging.h"
 				>
 			</File>
 			<File
@@ -210,6 +218,10 @@
 				RelativePath=".\utilities.h"
 				>
 			</File>
+			<File
+				RelativePath=".\wchar_logging.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="资源文件"
@@ -229,22 +241,18 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\config.h"
+		<Filter
+			Name="include"
 			>
-		</File>
-		<File
-			RelativePath=".\flags.h"
-			>
-		</File>
-		<File
-			RelativePath=".\logging.h"
-			>
-		</File>
-		<File
-			RelativePath=".\wchar_logging.h"
-			>
-		</File>
+			<File
+				RelativePath=".\flags.h"
+				>
+			</File>
+			<File
+				RelativePath=".\log.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

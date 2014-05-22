@@ -39,10 +39,6 @@ typedef unsigned __int64 uint64;
 #endif
 }
 
-#ifndef SUKEY_STRIP_LOG
-#define SUKEY_STRIP_LOG	0
-#endif
-
 #ifndef SUKEY_PREDICT_BRANCH_NOT_TAKEN
 #if 0
 #define SUKEY_PREDICT_BRANCH_NOT_TAKEN(x) (__builtin_expect(x, 0))
@@ -136,15 +132,6 @@ inline void LogPrintf(char* out,size_t size,const char* format,...)
 	va_end(args);
 }
 
-//普通LOG宏
-#define LOG(severity) if(FLAGS_log_open) COMPACT_SUKEY_LOG_##severity.stream()
-#define LOG_PRINTF(severity,format,...) \
-	do{\
-		char buf[600]={0};\
-		LogPrintf(buf,sizeof(buf)/sizeof(char)-1,format,##__VA_ARGS__);\
-		LOG(severity)<<buf;\
-	}while(0)\
-
 //sukey 空间内的各种类
 namespace SUKEY_NAMESPACE
 {
@@ -162,14 +149,6 @@ namespace SUKEY_NAMESPACE
 #define LOG_TO_STRING_0 LOG_ERROR_MSG
 #define LOG_0 LOG_ERROR_MSG
 #endif
-
-#ifndef NDEBUG
-
-#else
-#define DLOG(severity)\
-	(true) ? (void)0 : sukey::LogMessageVoidify() & LOG(severity)
-#endif
-
 
 namespace BASE_LOGGING_NAMESPACE
 {
@@ -192,10 +171,6 @@ namespace BASE_LOGGING_NAMESPACE
 
 struct DummyClassToDefineOperator {};
 
-
-// Define global operator<< to declare using ::operator<<.
-// This declaration will allow use to use CHECK macros for user
-// defined classes which have operator<< (e.g., stl_logging.h).
 inline std::ostream& operator<<(
     std::ostream& out, const sukey::DummyClassToDefineOperator&) {
   return out;
@@ -331,19 +306,12 @@ public:
 
 class SUKEY_LOG_DLL_DECL NullStream : public LogMessage::LogStream {
  public:
-  // Initialize the LogStream so the messages can be written somewhere
-  // (they'll never be actually displayed). This will be needed if a
-  // NullStream& is implicitly converted to LogStream&, in which case
-  // the overloaded NullStream::operator<< will not be invoked.
   NullStream() : LogMessage::LogStream(message_buffer_, 1, 0) { }
   NullStream(const char* /*file*/, int /*line*/,
              const CheckOpString& /*result*/) :
       LogMessage::LogStream(message_buffer_, 1, 0) { }
   NullStream &stream() { return *this; }
  private:
-  // A very short buffer for messages (which we discard anyway). This
-  // will be needed if NullStream& converted to LogStream& (e.g. as a
-  // result of a conditional expression).
   char message_buffer_[2];
 };
 

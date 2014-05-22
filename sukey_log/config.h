@@ -4,6 +4,10 @@
 #define	BASE_LOGGING_NAMESPACE base_logging
 #define FLAGS_NAMESPACE	flags
 
+#ifndef SUKEY_STRIP_LOG
+#define SUKEY_STRIP_LOG	0
+#endif
+
 #ifndef SUKEY_LOG_DLL_DECL
 #define SUKEY_LOG_IS_A_DLL  1  //如果是静态编译 不是DLL就不需要 
 #ifdef SUKEY_LOG_SOURCE 

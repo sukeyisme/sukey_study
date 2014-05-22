@@ -1,9 +1,4 @@
-//#include "utilities.h"
-//#include "flags.h"
-//#include "raw_logging.h"
-#include "wchar_logging.h"
-#include "logging.h"
-#include <wchar.h>
+#include "log.h"
 
 using namespace SUKEY_NAMESPACE;
 
@@ -19,9 +14,6 @@ int main(int argc,char *argv[])
 	LOG_PRINTF(INFO,L"×Ö·û´®:%s  Êý×Ö:%d",b,c);
 
 	LOG(INFO)<<b<<"Õª×Ô¸»";
-	/*char* b = "²âÊÔ";
-	long c= 2;
-	LOG_PRINTF(INFO,"×Ö·û´®:%s  Êý×Ö:%d",b,c);*/
 
 	return 0;
 }
